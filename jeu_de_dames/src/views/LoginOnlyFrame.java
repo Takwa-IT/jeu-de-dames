@@ -1,6 +1,9 @@
 package views;
 
 import javax.swing.*;
+
+import controllers.UtilisateurController;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -80,12 +83,29 @@ public class LoginOnlyFrame extends JFrame {
             if (username.isEmpty() || password.isEmpty()) {
                 messageLabel.setText("Veuillez remplir tous les champs.");
             } else {
-                // Ici tu peux ajouter une vraie vérification depuis un fichier ou un contrôleur
+            	try {
+            	    UtilisateurController controller = new UtilisateurController();
+            	    boolean isAuthenticated = controller.verifierConnexion(username, password);
 
-                // Supposons que les identifiants sont corrects :
-                new MenuFrame().setVisible(true);  // Ouvre le menu
-                dispose();  // Ferme la fenêtre de login
+            	    if (isAuthenticated) {
+            	        JOptionPane.showMessageDialog(this,
+            	                "Connexion réussie, bienvenue " + username + " !",
+            	                "Succès", JOptionPane.INFORMATION_MESSAGE);
+
+            	        new MenuFrame().setVisible(true);
+            	        dispose();
+            	    } else {
+            	        messageLabel.setText("Pseudo ou mot de passe incorrect.");
+            	    }
+            	} catch (Exception ex) {
+            	    ex.printStackTrace();
+            	    JOptionPane.showMessageDialog(this,
+            	            "Erreur lors de la connexion : " + ex.getMessage(),
+            	            "Erreur", JOptionPane.ERROR_MESSAGE);
+
+            	}
             }
+
         });
 
     }

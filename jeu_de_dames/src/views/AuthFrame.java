@@ -3,6 +3,11 @@ package views;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import controllers.UtilisateurController;
+import dao.JoueurDAO;
+import models.Joueur;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -145,15 +150,37 @@ public class AuthFrame extends JFrame {
                         "Erreur : veuillez remplir tous les champs.",
                         "Champs vides", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(null,
-                        "Bienvenue " + pseudo + " ! Ton compte a été créé.\nAvatar : " + avatarPath,
-                        "Succès", JOptionPane.INFORMATION_MESSAGE);
+                try {
+                    UtilisateurController controller = new UtilisateurController();
+                    if (controller.pseudoExiste(pseudo)) {
+                        JOptionPane.showMessageDialog(null,
+                                "Ce pseudonyme est déjà utilisé. Choisissez-en un autre.",
+                                "Pseudo existant", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        boolean ok = controller.inscrireNouvelUtilisateur(pseudo, motDePasse, nom, prenom, avatarPath);
+                        if (ok) {
+                            JOptionPane.showMessageDialog(null,
+                                    "Bienvenue " + pseudo + " ! Ton compte a été créé.\nAvatar : " + avatarPath,
+                                    "Succès", JOptionPane.INFORMATION_MESSAGE);
 
-                new MenuFrame().setVisible(true);
-
-                dispose();
+                            new MenuFrame().setVisible(true);
+                            dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(null,
+                                    "Erreur lors de la création du compte.",
+                                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                            "Erreur : " + ex.getMessage(),
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
+
 
         btnSeConnecter.addActionListener(e -> {
             new LoginOnlyFrame().setVisible(true);

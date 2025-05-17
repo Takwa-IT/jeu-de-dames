@@ -10,6 +10,10 @@ public class Joueur {
     private int victoires;
     private int defaites;
     private int partiesNulles;
+    
+    
+    
+    
 
     public Joueur(String pseudonyme, String motDePasse, String nom, String prenom, String avatar) {
         this.pseudonyme = pseudonyme;
