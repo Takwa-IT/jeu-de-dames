@@ -15,7 +15,6 @@ public class test {
 		
 		LoginOnlyFrame log1 = new LoginOnlyFrame();
 		log1.setVisible(false);
-
 		
 	}
 
