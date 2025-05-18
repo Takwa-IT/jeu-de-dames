@@ -89,14 +89,23 @@ public class Plateau {
 
     // ======== Affichage console temporaire ========
     public void afficherPlateau() {
-        System.out.println("   0 1 2 3 4 5 6 7 8 9");
-        for (int i = 0; i < TAILLE; i++) {
-            System.out.print(i + "  ");
-            for (int j = 0; j < TAILLE; j++) {
-                Pion pion = cases.get(i).get(j);
-                System.out.print((pion == null ? ". " : pion + " "));
-            }
-            System.out.println();
-        }
-    }
-}
+    	// Affiche les lettres pour les colonnes
+    	System.out.print("   ");
+    	for (char c = 'A'; c < 'A' + TAILLE; c++) {
+    	    System.out.print(c + " ");
+    	}
+    	System.out.println();
+
+    	// Affiche les lignes numérotées
+    	for (int i = 0; i < TAILLE; i++) {
+    	    System.out.printf("%2d ", i + 1); // ligne = 1 → 10
+
+    	    for (int j = 0; j < TAILLE; j++) {
+    	        Pion pion = cases.get(i).get(j);
+    	        System.out.print((pion == null ? ". " : pion + " "));
+    	    }
+
+    	    System.out.println();
+    	}
+
+    }}

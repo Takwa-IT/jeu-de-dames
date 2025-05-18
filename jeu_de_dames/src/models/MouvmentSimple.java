@@ -1,40 +1,63 @@
 package models;
 
-public class MouvmentSimple {
-    private Case destination;
-    private Case depart;
-    private Pion pion;
+import model.modelException.PositionInvalideException;
 
-    public MouvmentSimple(Case dest, Pion pion) {
-        this.depart = pion.getPosition();
-        this.destination = dest;
-        this.pion = pion;
-    }
+public class MouvmentSimple extends Mouvement {
+   
 
-    public void seDeplacer() {
+    public MouvmentSimple(Case destination, Pion pion, Plateau plateau) {
+		super(destination, pion, plateau);
+		
+	}
+
+    public boolean executer() throws PositionInvalideException {
         int ligneDepart = depart.getLigne();
         char colDepart = depart.getColonne();
         int ligneDest = destination.getLigne();
         char colDest = destination.getColonne();
 
+        // ----------- Cas Pion simple -----------
         if (!pion.estDame()) {
             int ligneValide = pion.getCouleur().equals("noir") ? ligneDepart - 1 : ligneDepart + 1;
             char colGauche = (char) (colDepart - 1);
             char colDroite = (char) (colDepart + 1);
 
-            if ((colDest == colGauche || colDest == colDroite) && ligneDest == ligneValide) {
+            if ((colDest == colGauche || colDest == colDroite)
+                    && colDest >= 'A' && colDest <= 'J'
+                    && ligneDest >= 1 && ligneDest <= 10
+                    && ligneDest == ligneValide) {
+
+                if (plateau.getPion(destination.getIndexLigne(), destination.getIndexColonne()) != null) {
+                    return false; // destination occupée
+                }
+
                 pion.setPosition(destination);
+                return true;
             }
-        } else {
-            
+        }
+
+        // ----------- Cas Dame -----------
+        else {
             int diffLigne = Math.abs(ligneDest - ligneDepart);
             int diffCol = Math.abs(colDest - colDepart);
 
             if (diffLigne == diffCol && diffLigne >= 1) {
+                if (ligneDest < 1 || ligneDest > 10 || colDest < 'A' || colDest > 'J') {
+                    return false;
+                }
+
+                if (plateau.getPion(destination.getIndexLigne(), destination.getIndexColonne()) != null) {
+                    return false;
+                }
+
                 pion.setPosition(destination);
+                return true;
             }
         }
+
+        return false;
     }
+
 }
 
 		

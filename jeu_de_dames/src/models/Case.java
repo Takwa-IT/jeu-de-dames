@@ -30,11 +30,19 @@ public class Case {
         return "" + colonne + ligne;
     }
 
-   
+    public int getIndexLigne() {
+        return ligne - 1;
+    }
+
+    public int getIndexColonne() {
+        return colonne - 'A';
+    }
+
     
 
     @Override
     public int hashCode() {
         return colonne * 31 + ligne;
     }
+    
 }

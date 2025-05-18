@@ -1,9 +1,6 @@
 /controllers/
-/images/
+/dao/
+/model/
 /models/
-/module-info.class
 /utils/
 /views/
-/model/
-/dao.class
-/dao/
