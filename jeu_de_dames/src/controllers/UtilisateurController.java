@@ -6,7 +6,7 @@ import models.Joueur;
 import utils.HashUtils;
 
 public class UtilisateurController {
-
+/*
     private JoueurDAO joueurDAO;
 
     public UtilisateurController() throws Exception {
@@ -15,7 +15,7 @@ public class UtilisateurController {
 
     /**
      * Vérifie si un pseudo existe déjà dans la base.
-     */
+     
     public boolean pseudoExiste(String pseudo) {
         try {
             return joueurDAO.pseudoExiste(pseudo);
@@ -27,7 +27,7 @@ public class UtilisateurController {
 
     /**
      * Crée un nouveau joueur dans la base de données.
-     */
+     
     public boolean inscrireNouvelUtilisateur(String pseudo, String motDePasse, String nom, String prenom, String avatarPath) {
         try {
         	String motDePasseHash = HashUtils.sha256(motDePasse);
@@ -49,6 +49,5 @@ public class UtilisateurController {
             return false;
         }
     }
-
-
+*/
 }

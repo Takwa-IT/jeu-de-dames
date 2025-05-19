@@ -6,7 +6,7 @@ import utils.ConnexionDB;
 import java.sql.*;
 
 public class JoueurDAO {
-    private Connection conn;
+  /*  private Connection conn;
 
     public JoueurDAO() {
         conn = ConnexionDB.getConnection();
@@ -54,6 +54,6 @@ public class JoueurDAO {
             }
         }
         return null;
-    }
+    }*/
 
 }

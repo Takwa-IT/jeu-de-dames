@@ -14,7 +14,7 @@ import java.io.File;
 
 public class AuthFrame extends JFrame {
 
-    private JTextField pseudoField, nomField, prenomField;
+  /*  private JTextField pseudoField, nomField, prenomField;
     private JPasswordField motDePasseField;
     private JButton btnSinscrire, btnSeConnecter, choisirAvatar;
     private JLabel avatarLabel;
@@ -200,6 +200,6 @@ public class AuthFrame extends JFrame {
         field.setForeground(NOIR);
         return field;
     }
-
+*/
     
 }

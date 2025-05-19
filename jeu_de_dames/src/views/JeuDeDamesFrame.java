@@ -1,26 +1,36 @@
 package views;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import models.GameManager;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class JeuDeDamesFrame extends JFrame {
-
     private final int TAILLE = 10;
     private JButton[][] boutons;
-    private ImageIcon pionBlanc;
-    private ImageIcon pionNoir;
-
+    private ImageIcon pionBlanc, pionNoir, dameBlanc, dameNoir;
     private JLabel joueur1PionsLabel, joueur1DamesLabel, joueur1KillsLabel;
     private JLabel joueur2PionsLabel, joueur2DamesLabel, joueur2KillsLabel;
-    private JLabel scoreLabel;
-
+    private JLabel scoreLabel, turnLabel, roundLabel;
     private JButton recommencerButton, quitterButton;
-
+    private GameManager gameManager;
     private int joueur1Pions = 20, joueur1Dames = 0, joueur1Kills = 0;
     private int joueur2Pions = 20, joueur2Dames = 0, joueur2Kills = 0;
+    private Border defaultBorder = BorderFactory.createEmptyBorder();
+    private Border selectedBorder = BorderFactory.createLineBorder(Color.YELLOW, 2);
+
+    public void selectionnerCase(int i, int j) {
+        boutons[i][j].setBorder(selectedBorder);
+    }
+
+    public void deselectionnerTout() {
+        for (int i = 0; i < TAILLE; i++) {
+            for (int j = 0; j < TAILLE; j++) {
+                boutons[i][j].setBorder(defaultBorder);
+            }
+        }
+    }
 
     public JeuDeDamesFrame() {
         setTitle("Jeu de Dames - Tour : 1");
@@ -28,43 +38,47 @@ public class JeuDeDamesFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Load images
         pionBlanc = redimensionnerImage("src/images/pion_blanc.png", 80, 80);
         pionNoir = redimensionnerImage("src/images/pion_noir.png", 80, 80);
+        dameBlanc = redimensionnerImage("src/images/dame_blanc.jpg", 80, 80);
+        dameNoir = redimensionnerImage("src/images/dame_noir.jpg", 80, 80);
 
-        // Plateau
+        // Initialize board
         boutons = new JButton[TAILLE][TAILLE];
         JPanel boardPanel = new JPanel(new GridLayout(TAILLE, TAILLE));
         for (int i = 0; i < TAILLE; i++) {
             for (int j = 0; j < TAILLE; j++) {
                 boutons[i][j] = new JButton();
-                if ((i + j) % 2 == 0)
-                    boutons[i][j].setBackground(new Color(245, 222, 179));
-                else {
-                    boutons[i][j].setBackground(new Color(139, 69, 19));
+                if ((i + j) % 2 == 0) {
+                    boutons[i][j].setBackground(new Color(245, 222, 179)); // Light squares
+                } else {
+                    boutons[i][j].setBackground(new Color(139, 69, 19)); // Dark squares
                     if (i < 4) boutons[i][j].setIcon(pionNoir);
                     else if (i > 5) boutons[i][j].setIcon(pionBlanc);
                 }
-                boutons[i][j].addActionListener(new CaseListener(i, j));  // Action pour chaque case
+                final int x = i;
+                final int y = j;
+                boutons[i][j].addActionListener(e -> gameManager.gererClicCase(x, y));
                 boardPanel.add(boutons[i][j]);
             }
         }
 
-        // Panneau d'infos (à droite)
+        // Info panel
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setOpaque(false);
         infoPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JLabel turnLabel = new JLabel("Début de la partie : le joueur blanc commence !");
+        turnLabel = new JLabel("Début de la partie : le joueur blanc commence !");
         turnLabel.setFont(new Font("Arial", Font.BOLD, 14));
         turnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         infoPanel.add(turnLabel);
         infoPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Infos des joueurs
-        infoPanel.add(creerPanelJoueur("Joueur 1 : Vari", joueur1Pions, joueur1Dames, joueur1Kills, true));
+        infoPanel.add(creerPanelJoueur("Vari (Blanc)", joueur1Pions, joueur1Dames, joueur1Kills, true));
         infoPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        infoPanel.add(creerPanelJoueur("Joueur 2 : Sylva", joueur2Pions, joueur2Dames, joueur2Kills, false));
+        infoPanel.add(creerPanelJoueur("Sylva (Noir)", joueur2Pions, joueur2Dames, joueur2Kills, false));
         infoPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         scoreLabel = new JLabel("Score total : 0 - 0", SwingConstants.CENTER);
@@ -72,13 +86,12 @@ public class JeuDeDamesFrame extends JFrame {
         scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         infoPanel.add(scoreLabel);
 
-        JLabel roundLabel = new JLabel("Manche : 1", SwingConstants.CENTER);
+        roundLabel = new JLabel("Manche : 1", SwingConstants.CENTER);
         roundLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         roundLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         infoPanel.add(roundLabel);
         infoPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        // Boutons
         recommencerButton = new JButton("Recommencer");
         quitterButton = new JButton("Quitter");
 
@@ -88,19 +101,22 @@ public class JeuDeDamesFrame extends JFrame {
         recommencerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         quitterButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        recommencerButton.addActionListener(e -> JOptionPane.showMessageDialog(this, "La partie va recommencer."));
+        recommencerButton.addActionListener(e -> gameManager.recommencerPartie());
         quitterButton.addActionListener(e -> System.exit(0));
 
-        // Boutons ajoutés au panneau d'infos sans le bouton abandonner
         infoPanel.add(recommencerButton);
         infoPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         infoPanel.add(quitterButton);
 
+        // Main panel
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(boardPanel, BorderLayout.CENTER);
         mainPanel.add(infoPanel, BorderLayout.EAST);
 
         add(mainPanel);
+
+        // Initialize GameManager
+        gameManager = new GameManager(this);
     }
 
     private JPanel creerPanelJoueur(String nom, int pions, int dames, int kills, boolean isFirst) {
@@ -148,30 +164,11 @@ public class JeuDeDamesFrame extends JFrame {
 
     private void styliserBoutonClair(JButton bouton) {
         bouton.setFocusPainted(false);
-        
-        // Dégradé de marron clair
-        bouton.setBackground(new Color(210, 180, 140)); // marron clair (type "tan")
-        bouton.setForeground(new Color(92, 51, 23)); // marron foncé pour le texte
-        
+        bouton.setBackground(new Color(210, 180, 140));
+        bouton.setForeground(new Color(92, 51, 23));
         bouton.setFont(new Font("Arial", Font.BOLD, 13));
         bouton.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
         bouton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
-
-    // Action pour chaque case (supprimée l'affichage de JOptionPane)
-    private class CaseListener implements ActionListener {
-        private final int i, j;
-
-        public CaseListener(int i, int j) {
-            this.i = i;
-            this.j = j;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Code pour gérer l'action de la case sans afficher un message
-            // Vous pouvez ajouter ici toute autre logique pour déplacer les pions, etc.
-        }
     }
 
     private ImageIcon redimensionnerImage(String chemin, int largeur, int hauteur) {
@@ -180,5 +177,51 @@ public class JeuDeDamesFrame extends JFrame {
         return new ImageIcon(img);
     }
 
-  
+    public void mettreAJourCase(int i, int j, ImageIcon icon) {
+        boutons[i][j].setIcon(icon);
+        boutons[i][j].revalidate();
+        boutons[i][j].repaint();
+        System.out.println("Updated GUI case: [" + i + "][" + j + "] with " + (icon == null ? "null" : "icon"));
+    }
+
+    public void viderCase(int i, int j) {
+        boutons[i][j].setIcon(null);
+        boutons[i][j].revalidate();
+        boutons[i][j].repaint();
+        System.out.println("Cleared GUI case: [" + i + "][" + j + "]");
+    }
+
+    public void mettreAJourLabels(int j1Pions, int j1Dames, int j1Kills,
+                                  int j2Pions, int j2Dames, int j2Kills,
+                                  int tour) {
+        joueur1PionsLabel.setText("Nombre de pions : " + j1Pions);
+        joueur1DamesLabel.setText("Nombre de dames : " + j1Dames);
+        joueur1KillsLabel.setText("Nombre de kills : " + j1Kills);
+        joueur2PionsLabel.setText("Nombre de pions : " + j2Pions);
+        joueur2DamesLabel.setText("Nombre de dames : " + j2Dames);
+        joueur2KillsLabel.setText("Nombre de kills : " + j2Kills);
+        turnLabel.setText("Tour du joueur : " + (tour == 1 ? "Blanc" : "Noir"));
+        scoreLabel.setText("Score total : " + j1Kills + " - " + j2Kills);
+        roundLabel.setText("Manche : " + ((tour + 1) / 2));
+    }
+
+    public ImageIcon getPionBlanc() {
+        return pionBlanc;
+    }
+
+    public ImageIcon getPionNoir() {
+        return pionNoir;
+    }
+
+    public ImageIcon getDameBlanc() {
+        return dameBlanc;
+    }
+
+    public ImageIcon getDameNoir() {
+        return dameNoir;
+    }
+
+    public int getTAILLE() {
+        return TAILLE;
+    }
 }

@@ -30,7 +30,7 @@ public class Plateau {
                     char colonne = (char) ('A' + j);
                     int ligne = i + 1;
                     Case position = new Case(colonne, ligne);
-                    String nom = "PN" + j;
+                    String nom = "PN" + j+i;
                     Pion pion = new Pion(nom, "noir", position);
                     try {
                         setPion(i, j, pion);
@@ -48,7 +48,7 @@ public class Plateau {
                     char colonne = (char) ('A' + j);
                     int ligne = i + 1;
                     Case position = new Case(colonne, ligne);
-                    String nom = "PB" + j;
+                    String nom = "PB" + j+i;
                     Pion pion = new Pion(nom, "blanc", position);
                     try {
                         setPion(i, j, pion);

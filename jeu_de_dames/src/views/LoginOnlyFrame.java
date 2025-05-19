@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class LoginOnlyFrame extends JFrame {
-    private JTextField usernameField;
+  /*  private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
     private JLabel messageLabel;
@@ -123,5 +123,5 @@ public class LoginOnlyFrame extends JFrame {
         return field;
     }
 
-    
+   */ 
 }
