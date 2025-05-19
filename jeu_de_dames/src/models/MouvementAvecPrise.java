@@ -3,8 +3,11 @@ package models;
 import model.modelException.PositionInvalideException;
 
 public class MouvementAvecPrise extends Mouvement {
+    private Case capturedPionCase; // Store the captured pion's case
+
     public MouvementAvecPrise(Case destination, Pion pion, Plateau plateau) {
         super(destination, pion, plateau);
+        this.capturedPionCase = null;
     }
 
     @Override
@@ -33,6 +36,7 @@ public class MouvementAvecPrise extends Mouvement {
                 if (pionAuMilieu != null
                         && !pionAuMilieu.getCouleur().equals(pion.getCouleur())
                         && plateau.getPion(destination.getIndexLigne(), destination.getIndexColonne()) == null) {
+                    capturedPionCase = caseMilieu;
                     plateau.supprimerPion(caseMilieu.getIndexLigne(), caseMilieu.getIndexColonne());
                     pion.setPosition(destination);
                     plateau.supprimerPion(depart.getIndexLigne(), depart.getIndexColonne());
@@ -75,6 +79,7 @@ public class MouvementAvecPrise extends Mouvement {
                 colCourante += dirCol;
             }
             if (opponentCount == 1 && plateau.getPion(destination.getIndexLigne(), destination.getIndexColonne()) == null) {
+                capturedPionCase = casePionAPrendre;
                 plateau.supprimerPion(casePionAPrendre.getIndexLigne(), casePionAPrendre.getIndexColonne());
                 pion.setPosition(destination);
                 plateau.supprimerPion(depart.getIndexLigne(), depart.getIndexColonne());
@@ -84,5 +89,10 @@ public class MouvementAvecPrise extends Mouvement {
             }
             System.out.println("Capture failed: " + (opponentCount == 0 ? "No opponent pion" : "Destination occupied"));
             return false;
-        }}
+        }
+    }
+
+    public Case getCapturedPionCase() {
+        return capturedPionCase;
+    }
 }

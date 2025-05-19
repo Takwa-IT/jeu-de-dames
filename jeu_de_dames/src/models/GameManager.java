@@ -75,59 +75,20 @@ public class GameManager {
             return false;
         }
 
-        // Find captured pion position before executing move
-        Case casePionAPrendre = null;
-        if (avecPrise) {
-            int diffLigne = to.getLigne() - from.getLigne();
-            int diffCol = to.getColonne() - from.getColonne();
-            int dirLigne = Integer.signum(diffLigne);
-            int dirCol = Integer.signum(diffCol);
-            int ligneCourante = from.getLigne() + dirLigne;
-            char colCourante = (char) (from.getColonne() + dirCol);
-            while (ligneCourante != to.getLigne() && colCourante != to.getColonne()) {
-                Case caseIntermediaire = new Case(colCourante, ligneCourante);
-                Pion pionIntermediaire = plateau.getPion(caseIntermediaire.getIndexLigne(), caseIntermediaire.getIndexColonne());
-                if (pionIntermediaire != null && !pionIntermediaire.getCouleur().equals(pion.getCouleur())) {
-                    casePionAPrendre = caseIntermediaire;
-                    break;
-                }
-                ligneCourante += dirLigne;
-                colCourante += dirCol;
-            }
-            // Check backward for dames
-            if (casePionAPrendre == null && pion.estDame()) {
-                dirLigne = -dirLigne;
-                dirCol = -dirCol;
-                ligneCourante = from.getLigne() + dirLigne;
-                colCourante = (char) (from.getColonne() + dirCol);
-                while (ligneCourante >= 1 && ligneCourante <= 10 && colCourante >= 'A' && colCourante <= 'J') {
-                    Case caseIntermediaire = new Case(colCourante, ligneCourante);
-                    Pion pionIntermediaire = plateau.getPion(caseIntermediaire.getIndexLigne(), caseIntermediaire.getIndexColonne());
-                    if (pionIntermediaire != null && !pionIntermediaire.getCouleur().equals(pion.getCouleur())) {
-                        casePionAPrendre = caseIntermediaire;
-                        break;
-                    }
-                    ligneCourante += dirLigne;
-                    colCourante += dirCol;
-                }
-            }
-        }
-
         Mouvement mouvement = avecPrise
                 ? new MouvementAvecPrise(to, pion, plateau)
                 : new MouvementSimple(to, pion, plateau);
 
         if (mouvement.executer()) {
-            // Update board manually
-            plateau.supprimerPion(from.getIndexLigne(), from.getIndexColonne());
-            plateau.setPion(to.getIndexLigne(), to.getIndexColonne(), pion);
-
             // Handle capture GUI update
-            if (avecPrise && casePionAPrendre != null) {
-                int i = casePionAPrendre.getIndexLigne();
-                int j = casePionAPrendre.getIndexColonne();
-                frame.viderCase(i, j);
-                System.out.println("GUI cleared captured pion at " + casePionAPrendre + " ([" + i + "][" + j + "])");
+            if (avecPrise) {
+                Case casePionAPrendre = ((MouvementAvecPrise) mouvement).getCapturedPionCase();
+                if (casePionAPrendre != null) {
+                    int i = casePionAPrendre.getIndexLigne();
+                    int j = casePionAPrendre.getIndexColonne();
+                    frame.viderCase(i, j);
+                    System.out.println("GUI cleared captured pion at " + casePionAPrendre + " ([" + i + "][" + j + "])");
+                }
             }
 
             // Handle promotion
@@ -260,7 +221,7 @@ public class GameManager {
 
         Plateau plateau = partie.getPlateau();
         for (int i = 0; i < frame.getTAILLE(); i++) {
-            for (int j = 0; j < frame.getTAILLE(); i++) {
+            for (int j = 0; j < frame.getTAILLE(); j++) {
                 try {
                     Pion pion = plateau.getPion(i, j);
                     if (pion != null) {

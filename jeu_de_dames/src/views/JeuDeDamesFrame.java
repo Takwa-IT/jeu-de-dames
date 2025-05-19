@@ -20,18 +20,6 @@ public class JeuDeDamesFrame extends JFrame {
     private Border defaultBorder = BorderFactory.createEmptyBorder();
     private Border selectedBorder = BorderFactory.createLineBorder(Color.YELLOW, 2);
 
-    public void selectionnerCase(int i, int j) {
-        boutons[i][j].setBorder(selectedBorder);
-    }
-
-    public void deselectionnerTout() {
-        for (int i = 0; i < TAILLE; i++) {
-            for (int j = 0; j < TAILLE; j++) {
-                boutons[i][j].setBorder(defaultBorder);
-            }
-        }
-    }
-
     public JeuDeDamesFrame() {
         setTitle("Jeu de Dames - Tour : 1");
         setSize(900, 600);
@@ -189,6 +177,18 @@ public class JeuDeDamesFrame extends JFrame {
         boutons[i][j].revalidate();
         boutons[i][j].repaint();
         System.out.println("Cleared GUI case: [" + i + "][" + j + "]");
+    }
+
+    public void selectionnerCase(int i, int j) {
+        boutons[i][j].setBorder(selectedBorder);
+    }
+
+    public void deselectionnerTout() {
+        for (int i = 0; i < TAILLE; i++) {
+            for (int j = 0; j < TAILLE; j++) {
+                boutons[i][j].setBorder(defaultBorder);
+            }
+        }
     }
 
     public void mettreAJourLabels(int j1Pions, int j1Dames, int j1Kills,
